@@ -1,0 +1,22 @@
+README
+    fast go, a fast dir tools.
+
+usage:
+    add 'source YOUR_PATH/go.sh' into your ~/.bashrc 
+
+
+command:
+    a.goadd
+    $> goadd KEY
+    add current dir identified by key
+
+    b.golist
+    $> golist
+    list all key and related dir
+
+    c.godel KEY
+    remote KEY mapping
+
+    d.go KEY
+    enter the KEY related dir
+

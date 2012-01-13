@@ -3,19 +3,62 @@
 #################################
 
 go_idx_path=~/.go_idx
+alias_idx_path=~/.alias_go_dix.sh
 if [ -f $go_idx_path ];then
     true
 else
     touch $go_idx_path
 fi
 
-shownames(){
-    sed -e 's/=[^=]*$//g' $go_idx_path
+if [ -f $alias_idx_path ]; then
+    true
+else 
+    touch $alias_idx_path
+fi
+
+__alias_add(){
+    source $1 
 }
 
-showpaths(){
-    sed -e 's/^[^=]*=//g' $go_idx_path
+__alias_add $alias_idx_path
+
+
+shownames(){
+    sed -e 's/=[^=]*$//g' $1
 }
+
+
+aliasadd(){
+    local key=''
+    local command=''
+    if [ $# -lt 2 ];then
+        echo "usage aliasadd KEY COMMAND.."
+    else
+        for para in $@;  
+        do
+            if [ ${#key} -eq 0 ];
+            then
+                key=$para
+            else
+                command=$command' '$para
+            fi
+        done
+    fi
+
+    if shownames $alias_idx_path |grep $key >>/dev/null; 
+    then
+        echo "$key is already occupied"
+        return
+    fi
+
+    echo "alias $key='$command'" >> $alias_idx_path 
+    __alias_add $alias_idx_path
+}
+
+aliaslist(){
+    cat $alias_idx_path
+}
+
 
 goadd(){
     local bmpath=$(pwd)
@@ -27,7 +70,7 @@ goadd(){
     fi
 #    echo "$# $bmpath $bmname"
     
-    if shownames|grep $bmname >>/dev/null; then
+    if shownames $go_idx_path |grep $bmname >>/dev/null; then
         echo "$bmname is already occupied"
         return
     fi
@@ -39,9 +82,11 @@ golist(){
     cat $go_idx_path | sed -e 's/=/  /'
 }
 
+
+
 go(){
     if [ $# -eq 1 ]; then
-        if shownames | grep $1 >>/dev/null; then
+        if shownames $go_idx_path | grep $1 >>/dev/null; then
             matchone=$(grep $1 $go_idx_path)
             target=${matchone##*=}
             cd $target
@@ -53,7 +98,7 @@ go(){
 
 godel(){
     for key in $@; do
-        if shownames | grep $key >>/dev/null; then
+        if shownames $go_idx_path | grep $key >>/dev/null; then
             cat $go_idx_path | grep "$key="
             echo "is deleted"
             sed -i -e "/^${key}=/d" $go_idx_path
@@ -61,6 +106,18 @@ godel(){
     done
 }
 
+aliasdel(){
+    for key in $@;
+    do
+        if shownames $alias_idx_path |grep $key >>/dev/null;
+        then
+            cat $alias_idx_path |grep "$key="
+            echo "is deleted"
+            sed -i -e "/^alias ${key}=/d" $alias_idx_path
+            unalias $key
+        fi
+    done
+}
 
 
 ################################

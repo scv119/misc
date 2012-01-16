@@ -3,7 +3,7 @@
 #################################
 
 go_idx_path=~/.go_idx
-alias_idx_path=~/.alias_go_dix.sh
+alias_idx_path=~/.alias_go_dix
 if [ -f $go_idx_path ];then
     true
 else

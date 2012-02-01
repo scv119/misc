@@ -6,8 +6,12 @@ def foo(callable):
 
 def decorator(i):
     def fun(callable):
+        def dec_fun(*arg, **karg):
+            g = callable(*arg, **karg)
+            print dir(g)
+            return g
         print i
-        return callable
+        return dec_fun 
     return fun
 
 @decorator('test')

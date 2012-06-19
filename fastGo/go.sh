@@ -86,10 +86,13 @@ golist(){
 
 go(){
     if [ $# -eq 1 ]; then
-        if shownames $go_idx_path | grep $1 >>/dev/null; then
-            matchone=$(grep $1 $go_idx_path)
+        if shownames $go_idx_path | grep $1 >> /dev/null; then
+            matchone=$(grep "$1="  $go_idx_path)
+            echo " $matchone" 
             target=${matchone##*=}
             cd $target
+        else
+            cd $1
         fi
     else
         echo 'usage go KEY'
